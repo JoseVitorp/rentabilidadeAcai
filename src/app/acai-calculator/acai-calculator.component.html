@@ -1,0 +1,47 @@
+<!-- src/app/acai-calculator/acai-calculator.component.html -->
+<div class="container">
+  <header>
+    <img src="assets/logo_em_alta.png" alt="Di Matteo Açaí">
+    <h1>Calculadora de Rentabilidade Açaí</h1>
+  </header>
+
+  <form (ngSubmit)="calculate()">
+    <div class="mb-4">
+      <label for="size-select" class="form-label">Selecione o tamanho do açaí:</label>
+      <select id="size-select" class="form-select" (change)="onSizeChange($event)">
+        <option value="" disabled selected>Selecione o tamanho do açaí</option>
+        <option *ngFor="let size of getAcaiSizes()" [value]="size.size">{{ size.size }}ml - {{ size.sellingPrice | currency }}</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-6" *ngFor="let category of categories">
+        <h2>{{ category }}</h2>
+        <div class="input-group mb-3">
+          <select class="form-select" (change)="onToppingChange($event, category)">
+            <option value="" disabled selected>Selecione {{ category }}</option>
+            <option *ngFor="let topping of getToppingsByCategory(category)" [value]="topping.name">{{ topping.name }} (Custo: {{ topping.additionalCost | currency }}, Venda: {{ topping.sellingPrice | currency }}, Retira Polpa: {{ topping.pulpReduction }}ml)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">Calcular</button>
+  </form>
+
+  <div *ngIf="selectedToppings.length > 0" class="mt-4">
+    <h3>Complementos Selecionados</h3>
+    <ul class="list-group">
+      <li *ngFor="let topping of selectedToppings" class="list-group-item">
+        {{ topping.name }} (Custo: {{ topping.additionalCost | currency }}, Venda: {{ topping.sellingPrice | currency }}, Retira Polpa: {{ topping.pulpReduction }}ml)
+      </li>
+    </ul>
+  </div>
+
+  <div *ngIf="totalCost !== null && profitability !== null" class="mt-4">
+    <h3>Resultados</h3>
+    <p>Redução total de polpa: {{ totalPulpReduction }}ml</p>
+    <p>Custo total: {{ totalCost | currency }}</p>
+    <p>Rentabilidade: {{ profitability | currency }}</p>
+  </div>
+</div>
