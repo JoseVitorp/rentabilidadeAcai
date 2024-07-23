@@ -3,11 +3,11 @@ import { AcaiCalculatorComponent } from './acai-calculator/acai-calculator.compo
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  imports: [AcaiCalculatorComponent]
+  standalone: true,
+  imports: [AcaiCalculatorComponent] // Adicione AcaiCalculatorComponent
 })
 export class AppComponent {
-  title = 'acai-calculator';
+  title = 'rentabilidadeAcai';
 }

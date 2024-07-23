@@ -1,64 +1,68 @@
-// src/app/acai-calculator/acai-calculator.component.ts
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Topping } from '../models/topping';
-import { ToppingService } from '../services/topping.service';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { AcaiService } from '../services/acai.service';
-import { AcaiSize } from '../models/acai-size';
+import { ToppingService } from '../services/topping.service';
 
 @Component({
   selector: 'app-acai-calculator',
-  standalone: true,
   templateUrl: './acai-calculator.component.html',
   styleUrls: ['./acai-calculator.component.css'],
-  imports: [CommonModule, FormsModule]
+  standalone: true,
+  imports: [CommonModule, CurrencyPipe],
+  providers: [AcaiService, ToppingService]
 })
-export class AcaiCalculatorComponent {
+export class AcaiCalculatorComponent implements OnInit {
   categories = ['Frutas', 'Chocolates', 'Diversos', 'Cremes', 'Adicionais Diet'];
-  selectedToppings: Topping[] = [];
-  selectedSize: AcaiSize | null = null;
+  toppings: any[] = [];
+  selectedToppings: any[] = [];
   totalPulpReduction: number = 0;
-  totalCost: number | null = null;
+  totalCost: number = 0;
+  totalSellingPrice: number = 0;
   profitability: number | null = null;
+  acaiSizes: any[] = [];
+  selectedSize: any = null;
 
-  constructor(private toppingService: ToppingService, private acaiService: AcaiService) {}
+  constructor(private acaiService: AcaiService, private toppingService: ToppingService) {}
 
-  getToppingsByCategory(category: string): Topping[] {
-    return this.toppingService.getToppings().filter(t => t.category === category);
+  ngOnInit() {
+    this.toppings = this.toppingService.getToppings();
+    this.acaiSizes = this.acaiService.getAcaiSizes();
   }
 
-  getAcaiSizes(): AcaiSize[] {
-    return this.acaiService.getAcaiSizes();
+  getToppingsByCategory(category: string) {
+    return this.toppings.filter(topping => topping.category === category);
   }
 
-  onToppingChange(event: Event, category: string): void {
-    const select = event.target as HTMLSelectElement;
-    const toppingName = select.value;
-    const topping = this.getToppingsByCategory(category).find(t => t.name === toppingName);
+  onSizeChange(event: any) {
+    this.selectedSize = this.acaiSizes.find(size => size.size == event.target.value);
+  }
 
-    if (topping) {
-      this.selectedToppings.push(topping);
+  onToppingChange(event: any, category: string) {
+    const selectedTopping = this.toppings.find(topping => topping.name === event.target.value && topping.category === category);
+    if (selectedTopping && !this.selectedToppings.includes(selectedTopping)) {
+      this.selectedToppings.push(selectedTopping);
     }
-
-    // Reset the select element
-    select.value = '';
   }
 
-  onSizeChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    const selectedSize = this.acaiService.getAcaiSizes().find(size => size.size === +select.value);
-    this.selectedSize = selectedSize || null;
+  calculate(event: Event) {
+    event.preventDefault();
+    this.totalPulpReduction = this.selectedToppings.reduce((acc, topping) => acc + topping.pulpReduction, 0);
+    this.totalCost = this.selectedToppings.reduce((acc, topping) => acc + topping.additionalCost, 0);
+    this.totalSellingPrice = this.selectedToppings.reduce((acc, topping) => acc + topping.sellingPrice, 0);
+    if (this.selectedSize) {
+      const baseCost = this.selectedSize.size * 0.0145; // Custo base do açaí por ml
+      const adjustedCost = this.totalPulpReduction * 0.0145; // Custo ajustado pela polpa retirada
+      this.totalCost += baseCost - adjustedCost;
+      const baseSellingPrice = this.selectedSize.sellingPrice;
+      this.totalSellingPrice += baseSellingPrice;
+      this.profitability = this.totalSellingPrice - this.totalCost;
+    }
   }
 
-  calculate(): void {
-    if (!this.selectedSize) return;
-
-    this.totalPulpReduction = this.selectedToppings.reduce((sum, t) => sum + t.pulpReduction, 0);
-    const totalAdditionalCost = this.selectedToppings.reduce((sum, t) => sum + t.additionalCost, 0);
-    const acaiCost = (this.selectedSize.size - this.totalPulpReduction) * this.selectedSize.costPerMl;
-    const totalSellingPrice = this.selectedSize.sellingPrice + this.selectedToppings.reduce((sum, t) => sum + t.sellingPrice, 0);
-    this.totalCost = acaiCost + totalAdditionalCost;
-    this.profitability = totalSellingPrice - this.totalCost;
+  clearSelections() {
+    this.selectedToppings = [];
+    this.totalPulpReduction = 0;
+    this.totalCost = 0;
+    this.profitability = null;
   }
 }

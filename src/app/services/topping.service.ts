@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Topping } from '../models/topping';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ToppingService {
-  private toppings: Topping[] = [
+  private toppings = [
     // Frutas
     { name: 'Banana', category: 'Frutas', pulpReduction: 0, additionalCost: 0.76, sellingPrice: 2.5 },
     { name: 'Morango', category: 'Frutas', pulpReduction: 0, additionalCost: 2.62, sellingPrice: 4.0 },
@@ -49,7 +48,7 @@ export class ToppingService {
     { name: 'Cocco Ralado', category: 'Diversos', pulpReduction: 180.41, additionalCost: 1.75, sellingPrice: 2.0 }
   ];
 
-  getToppings(): Topping[] {
+  getToppings() {
     return this.toppings;
   }
 }

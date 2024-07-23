@@ -7,9 +7,9 @@ import { AcaiSize } from '../models/acai-size';
 })
 export class AcaiService {
   private acaiSizes: AcaiSize[] = [
-    { size: 300, costPerMl: 0.0135, sellingPrice: 16.0 },
-    { size: 500, costPerMl: 0.0135, sellingPrice: 20.0 },
-    { size: 700, costPerMl: 0.0135, sellingPrice: 25.0 }
+    { size: 300, costPerMl: 0.0145, sellingPrice: 16.0 },
+    { size: 500, costPerMl: 0.0145, sellingPrice: 20.0 },
+    { size: 700, costPerMl: 0.0145, sellingPrice: 25.0 }
   ];
 
   getAcaiSizes(): AcaiSize[] {
