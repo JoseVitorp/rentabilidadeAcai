@@ -1,7 +1,7 @@
-<div class="container">
-  <header>
-    <img src="assets/logo_em_alta.png" alt="Di Matteo Açaí">
-    <h1>Calculadora de Rentabilidade Açaí</h1>
+<div class="container mt-5">
+  <header class="text-center mb-4">
+    <img src="assets/logo_em_alta.png" alt="Di Matteo Açaí" class="img-fluid mb-2" style="max-width: 150px;">
+    <h1 class="h3">Calculadora de Rentabilidade Açaí</h1>
   </header>
 
   <form (submit)="calculate($event)">
@@ -9,63 +9,63 @@
       <label for="size-select" class="form-label">Selecione o tamanho do açaí:</label>
       <select id="size-select" class="form-select" (change)="onSizeChange($event)">
         <option value="" disabled selected>Selecione o tamanho do açaí</option>
-        <option *ngFor="let size of acaiSizes" [value]="size.size">{{ size.size }}ml - {{ size.sellingPrice | currency }}</option>
+        <option *ngFor="let size of acaiSizes" [value]="size.size">{{ size.size }}ml - {{ size.sellingPrice | currencyBrl }}</option>
       </select>
     </div>
 
-    <div class="row">
-      <div class="col-md-6 mb-6" *ngFor="let category of categories">
-        <h2>{{ category }}</h2>
-        <div class="input-group mb-3">
-          <select class="form-select" (change)="onToppingChange($event, category)">
-            <option value="" disabled selected>Selecione {{ category }}</option>
-            <option *ngFor="let topping of getToppingsByCategory(category)" [value]="topping.name">
-              {{ topping.name }} (Custo: {{ topping.additionalCost | currency }}, Venda: {{ topping.sellingPrice | currency }}, Retira Polpa: {{ topping.pulpReduction }}ml)
-            </option>
-          </select>
+    <div *ngFor="let category of categories" class="mb-4">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="h5">{{ category }}</h2>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div *ngFor="let topping of getToppingsByCategory(category)" class="col-md-6 mb-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-0">{{ topping.name }}</h6>
+                  <small>Custo: {{ topping.additionalCost | currencyBrl }} | Venda: {{ topping.sellingPrice | currencyBrl }} | Retira Polpa: {{ topping.pulpReduction }}ml</small>
+                </div>
+                <div class="input-group input-group-sm" style="max-width: 150px;">
+                  <input type="number" min="1" [(ngModel)]="selectedQuantities[topping.name]" class="form-control" [ngModelOptions]="{standalone: true}">
+                  <button type="button" class="btn btn-primary btn-sm" (click)="addTopping(topping)">Adicionar</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-      <div class="container">
-        <div class="row">
-
-          <div>
-          <button type="submit" class="btn btn-success col-lg-6">Calcular</button>
-          <button type="button" class="btn btn-warning col-lg-6"
-          (click)="clearSelections()">Limpar Seleções</button>
-          </div>
-          <div>
-
-            </div>
-
-        </div>
-      </div>
+    <div class="d-flex justify-content-between mt-4">
+      <button type="submit" class="btn btn-success col-lg-6">Calcular</button>
+      <button type="button" class="btn btn-warning col-lg-6" (click)="clearSelections()">Limpar Seleções</button>
+    </div>
   </form>
 
   <div *ngIf="selectedToppings.length > 0" class="mt-4">
-    <h3>Complementos Selecionados</h3>
+    <h3 class="h5">Complementos Selecionados</h3>
     <ul class="list-group">
       <li *ngFor="let topping of selectedToppings" class="list-group-item list-group-item-info">
-        {{ topping.name }} (Custo: {{ topping.additionalCost | currency }}, Venda: {{ topping.sellingPrice | currency }}, Retira Polpa: {{ topping.pulpReduction }}ml)
+        {{ topping.name }} (Quantidade: {{ topping.quantity }}, Custo: {{ topping.additionalCost | currencyBrl }}, Venda: {{ topping.sellingPrice | currencyBrl }}, Retira Polpa: {{ topping.pulpReduction }}ml)
       </li>
     </ul>
   </div>
 
   <div *ngIf="totalCost !== null && profitability !== null" class="mt-4">
-    <h3>Resultados</h3>
+    <h3 class="h5">Resultados</h3>
     <ul class="list-group">
       <li class="list-group-item list-group-item-light">
         Redução total de polpa: {{ totalPulpReduction }}ml
       </li>
       <li class="list-group-item list-group-item-danger">
-        Custo total (incluso redução da polpa): {{ totalCost | currency }}
+        Custo total (incluso redução da polpa): {{ totalCost | currencyBrl }}
       </li>
       <li class="list-group-item list-group-item-info">
-        Preço de venda: {{ totalSellingPrice | currency }}
+        Preço de venda: {{ totalSellingPrice | currencyBrl }}
       </li>
       <li class="list-group-item list-group-item-success">
-        Rentabilidade: {{ profitability | currency }}
+        Rentabilidade: {{ profitability | currencyBrl }}
       </li>
 
     </ul>

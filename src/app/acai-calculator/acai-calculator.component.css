@@ -5,24 +5,29 @@ body {
 }
 
 h1 {
-  color: #4a148c;
+  color: #601F6F;
 }
 
 .card {
-  border-color: #4a148c;
+  border-color: #601F6F;
 }
 
 .card-header {
-  background-color: #4a148c;
+  background-color: #601F6F;
   color: white;
 }
 
 .btn-primary {
-  background-color: #4a148c;
-  border-color: #4a148c;
+  background-color: #601F6F;
+  border-color: #601F6F;
 }
 
 .btn-danger {
   background-color: #d32f2f;
   border-color: #d32f2f;
+}
+
+.btn-warning{
+  background-color: #FC9400;
+  border-color: #FC9400;
 }
